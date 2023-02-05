@@ -28,8 +28,8 @@ app.get('/', (req, res) => {
 
 connectDB();
 
-app.listen(3000, () => {
-    console.log('Server running on http://localhost:3000 hello world jeewa');
+app.listen(8080, () => {
+    console.log('Server running on http://localhost:8080 hello world jeewa');
 });
 
 app.post("/addpaper", async (req, res) => {
@@ -51,7 +51,7 @@ app.post("/addpaper", async (req, res) => {
     }
 });
 
-app.get("/papers", async(req, res)=> {
+app.get("/getpapers", async(req, res)=> {
     try{
         Collections.find({},(error:any, papers:any) => {
             if(error){
@@ -65,11 +65,11 @@ app.get("/papers", async(req, res)=> {
     }
 })
 
-app.get("/papers/:id", async(req,res) => {
+app.get("/getpapers/:id", async(req,res) => {
     Collections.findById(req.params.id, (error:any, paper:any) => {
         if(error){
             res.status(500).send(error);
-        }else if(error){
+        }else if(paper){
             res.status(200).send(paper);
         }else{
             res.status(404).send('Paper Not Found')
