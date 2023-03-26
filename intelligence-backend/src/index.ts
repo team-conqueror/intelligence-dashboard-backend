@@ -3,10 +3,12 @@ import mongoose from "mongoose";
 import Collections from "./Collections";
 import cors from 'cors';
 import bodyParser from "body-parser";
+import router from "./Routes/Routes";
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+app.use("/", router);
 
 const mongoUrl = "mongodb+srv://testuser:test@cluster0.ldkdk.gcp.mongodb.net/?retryWrites=true&w=majority";
 mongoose.set('strictQuery', false);
@@ -41,7 +43,6 @@ app.post("/addpaper", async (req, res) => {
             courseCode: req.body.courseCode,
             dateAndTime: req.body.dateAndTime,
             questions: req.body.questions
-
         });
         await newCollection.save();
         res.status(201).json({ message: "Document created successfully" });
