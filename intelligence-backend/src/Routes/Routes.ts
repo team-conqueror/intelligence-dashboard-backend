@@ -1,5 +1,6 @@
 import express from 'express';
 import StudentCollections from "../DatabaseCollections/Students";
+import PapersCollections from "../DatabaseCollections/PapersCollection";
 
 const router = express.Router();
 
@@ -48,6 +49,54 @@ router.route("/addStudent").post(async (req, res) => {
     }catch (err){
         res.status(500).json(err);
         console.error(err);
+    }
+})
+
+
+router.route("/addPaper").post(async (req, res) => {
+    try{
+        console.log(req.body);
+        const newPaperCol = new PapersCollections({
+            courseCode: req.body.courseCode,
+            subjectName: req.body.subjectName,
+            teacher: req.body.teacher,
+            dateAndTime: req.body.dateAndTime,
+            instructions: req.body.instructions,
+            timeDuration: req.body.timeDuration,
+            questions: req.body.questions
+        });
+        await newPaperCol.save();
+        res.status(201).json(newPaperCol);
+    }catch (err){
+        res.status(500).json(err);
+        console.error(err);
+    }
+})
+router.route("/getPapers").get(async (req, res) => {
+    try{
+        PapersCollections.find({}, (error:any, papers: any) => {
+            if(error){
+                res.status(500).send(error);
+            }else{
+                res.status(200).send(papers);
+            }
+        })
+    }catch (err){
+        res.status(500).json({err});
+    }
+})
+
+router.route("/getPaper/:id").get(async (req,res) => {
+    try{
+        PapersCollections.findById(req.params.id, (error: any, paper: any) => {
+            if(error){
+                res.status(500).send(error);
+            }else{
+                res.status(200).send(paper);
+            }
+        })
+    }catch (err){
+        res.status(500).json({err});
     }
 })
 
