@@ -17,6 +17,21 @@ router.route("/getStudents").get((req, res) =>{
     }
 } )
 
+router.route("/getStudent/:id").get(async (req, res) => {
+    try{
+        StudentCollections.findById(req.params.id, (error: any, student: any) => {
+            if(error){
+                res.status(500).send(error);
+            }else{
+                res.status(200).send(student);
+                console.log(student);
+            }
+        })
+    }catch (err){
+        res.status(500).json(err);
+    }
+})
+
 router.route("/addStudent").post(async (req, res) => {
     try{
         console.log(req.body);
