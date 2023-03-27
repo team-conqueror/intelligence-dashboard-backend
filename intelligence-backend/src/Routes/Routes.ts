@@ -17,6 +17,23 @@ router.route("/getStudents").get((req, res) =>{
         res.status(500).json({err});
     }
 } )
+router.route("/getStudentsCc/:courseCode").get((req, res)=>{
+    try{
+        const courseCode = req.params.courseCode;
+
+        StudentCollections.find({
+            "subjectsEnrolled.courseCode": courseCode
+        },(error: any, students: any)=> {
+            if(error){
+                res.status(500).send(error);
+            }else{
+                res.status(200).send(students);
+            }
+        })
+    }catch (err){
+        res.status(500).json({err});
+    }
+})
 
 router.route("/getStudent/:id").get(async (req, res) => {
     try{
@@ -49,6 +66,27 @@ router.route("/addStudent").post(async (req, res) => {
     }catch (err){
         res.status(500).json(err);
         console.error(err);
+    }
+})
+
+router.route("/updateStudent/:id").put(async(req, res) => {
+    try{
+        console.log(req.body);
+
+        const student = await StudentCollections.findById(req.params.id);
+        if(!student){
+            return res.status(404).json({message: "Student not found"});
+        }
+        student.name = req.body.name || student.name;
+        student.studentNumber = req.body.studentNumber || student.studentNumber;
+        student.academicYear = req.body.academicYear || student.academicYear;
+        student.subjectsEnrolled = req.body.subjectsEnrolled || student.subjectsEnrolled;
+
+        const updatedStudent = await student.save();
+        res.status(200).json(updatedStudent);
+
+    }catch (error){
+        console.error(error);
     }
 })
 
@@ -97,6 +135,41 @@ router.route("/getPaper/:id").get(async (req,res) => {
         })
     }catch (err){
         res.status(500).json({err});
+    }
+})
+
+router.route("/getPaperCourseCode/:courseCode").get(async (req, res) => {
+    try {
+        const paper = await PapersCollections.findOne({ courseCode: req.params.courseCode }).exec();
+        if (!paper) {
+            return res.status(404).send("Paper not found");
+        }
+        res.status(200).send(paper);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err });
+    }
+});
+
+router.route("/updatePaper/:id").put(async(req, res) => {
+    try{
+
+        const paper = await PapersCollections.findById(req.params.id);
+        if(!paper){
+            return res.status(404).json({message: "Paper not found"});
+        }
+        paper.courseCode = req.body.courseCode || paper.courseCode;
+        paper.subjectName = req.body.subjectName || paper.subjectName;
+        paper.teacher = req.body.teacher || paper.teacher;
+        paper.dateAndTime = req.body.dateAndTime || paper.dateAndTime;
+        paper.timeDuration = req.body.timeDuration || paper.timeDuration;
+        paper.questions = req.body.questions || paper.questions;
+
+        const updatedPaper = await paper.save();
+        res.status(200).json(updatedPaper);
+
+    }catch (error){
+        console.error(error);
     }
 })
 
