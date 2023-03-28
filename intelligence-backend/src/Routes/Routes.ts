@@ -35,6 +35,24 @@ router.route("/getStudentsCc/:courseCode").get((req, res)=>{
     }
 })
 
+router.route("/getStudentsRr/:name").get((req, res)=>{
+    try{
+        const name = req.params.name;
+
+        StudentCollections.find({
+            "name": name
+        },(error: any, students: any)=> {
+            if(error){
+                res.status(500).send(error);
+            }else{
+                res.status(200).send(students);
+            }
+        })
+    }catch (err){
+        res.status(500).json({err});
+    }
+})
+
 router.route("/getStudent/:id").get(async (req, res) => {
     try{
         StudentCollections.findById(req.params.id, (error: any, student: any) => {
